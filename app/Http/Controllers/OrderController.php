@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Models\Project;
-use App\Models\ProjectBid;
+use App\Models\Job;
+use App\Models\JobBid;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -29,19 +29,19 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'project_id' => 'required|numeric|min:1',
-            'project_bid_id' => 'required|numeric|min:1',
+            'job_id' => 'required|numeric|min:1',
+            'job_bid_id' => 'required|numeric|min:1',
             'worker_id' => 'required|numeric|min:1',
 
         ]);
 
-        $bid = ProjectBid::find($request->project_bid_id);
-        $project = Project::find($request->project_id);
+        $bid = JobBid::find($request->job_bid_id);
+        $job = Job::find($request->job_id);
         $worker = User::find($request->worker_id);
 
         $order = new Order();
         $order->bid()->associate($bid);
-        $order->project()->associate($project);
+        $order->job()->associate($job);
         $order->worker()->associate($worker);
 
         $order->save();

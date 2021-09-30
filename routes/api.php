@@ -2,9 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ProjectBidController;
-use App\Http\Controllers\ProjectCategoryController;
-use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\JobBidController;
+use App\Http\Controllers\JobCategoryController;
+use App\Http\Controllers\JobController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,16 +25,20 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::post('/user', function () {
-        return auth()->user();
+        $response = [
+            'user' => auth()->user()
+        ];
+        return response($response, '200');
     });
 
-    Route::post('/store_project', [ProjectController::class, 'store'])->name('project.store');
-    Route::delete('/project/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
+    Route::post('/store_job', [JobController::class, 'store'])->name('job.store');
+    Route::delete('/destroy_job', [JobController::class, 'destroy'])->name('job.destroy');
 
-    Route::post('/store_project_category', [ProjectCategoryController::class, 'store']);
-    Route::post('/store_project_bid', [ProjectBidController::class, 'store']);
+    Route::post('/store_job_category', [JobCategoryController::class, 'store']);
+    Route::post('/store_job_bid', [JobBidController::class, 'store']);
+    Route::delete('/destroy_job_bid', [JobBidController::class, 'destroy']);
 
-    Route::post('/project_bids/{project}', [ProjectBidController::class, 'projectBids']);
+    Route::post('/job_bids/{job}', [JobBidController::class, 'jobBids']);
 
     Route::post('/orders', [OrderController::class, 'workerOrders']);
 
@@ -44,7 +48,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::post('/projects', [ProjectController::class, 'index'])->name('projects');
-Route::post('/project/{project}', [ProjectController::class, 'singleProject'])->name('project');
+Route::post('/jobs', [JobController::class, 'index'])->name('jobs');
+Route::post('/job/{job}', [JobController::class, 'singleJob'])->name('job');
 
 Route::post('/order/{order}', [OrderController::class, 'singleOrder']);

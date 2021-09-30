@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProjectBidsTable extends Migration
+class CreateJobBidsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateProjectBidsTable extends Migration
      */
     public function up()
     {
-        Schema::create('project_bids', function (Blueprint $table) {
+        Schema::create('job_bids', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->float('offered_amount');
             $table->text('details');
             $table->foreignId('offered_by')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
+            $table->foreignId('job_id')->constrained('work_jobs')->cascadeOnDelete();
 
         });
     }
@@ -31,6 +31,6 @@ class CreateProjectBidsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('project_bids');
+        Schema::dropIfExists('job_bids');
     }
 }

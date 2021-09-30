@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProjectBid extends Model
+class JobBid extends Model
 {
     use HasFactory;
 
-    public function project()
+    public function job()
     {
-        return $this->belongsTo(Project::class,'project_id');
+        return $this->belongsTo(Job::class,'job_id');
     }
 
     public function offeredBy()

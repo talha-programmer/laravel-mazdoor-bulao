@@ -44,9 +44,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function projects()
+    public function jobs()
     {
-        return $this->hasMany(Project::class, 'posted_by' );
+        return $this->hasMany(Job::class, 'posted_by' );
     }
 
     public function orders()
@@ -58,6 +58,26 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Skill::class, 'worker_skills');
     }
+
+    public function bids()
+    {
+        return $this->hasMany(JobBid::class, 'offered_by');
+    }
+
+    public function appliedJobs(): array
+    {
+        // Return applied jobs as [{'job_id', job}] (job_id as indexes of the array)
+        $appliedJobs = [];
+        $bids = $this->bids()->with('job')->get();
+
+        foreach ($bids as $bid){
+            $job = $bid->job;
+            $appliedJobs[$job->id] = $job;
+        }
+
+        return $appliedJobs;
+    }
+
 
 
 }

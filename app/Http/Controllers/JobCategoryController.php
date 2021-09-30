@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProjectCategory;
+use App\Models\JobCategory;
 use Illuminate\Http\Request;
 
-class ProjectCategoryController extends Controller
+class JobCategoryController extends Controller
 {
     public function __construct()
     {
@@ -14,7 +14,7 @@ class ProjectCategoryController extends Controller
 
     public function index()
     {
-        return ProjectCategory::all();
+        return JobCategory::all();
     }
 
     public function store(Request $request)
@@ -24,10 +24,10 @@ class ProjectCategoryController extends Controller
         ]);
 
         $category = null;
-        if($request->project_category_id > 0){
-            $category = ProjectCategory::find($request->project_category_id);
+        if($request->job_category_id > 0){
+            $category = JobCategory::find($request->job_category_id);
         }else{
-            $category = new ProjectCategory();
+            $category = new JobCategory();
         }
 
         $category->name = $request->name;
@@ -37,7 +37,7 @@ class ProjectCategoryController extends Controller
         return $category;
     }
 
-    public function destroy(ProjectCategory $category)
+    public function destroy(JobCategory $category)
     {
        return $category->delete();
     }

@@ -15,9 +15,9 @@ class Order extends Model
 
     ];
 
-    public function project()
+    public function job()
     {
-        return $this->belongsTo(Project::class, 'project_id');
+        return $this->belongsTo(Job::class, 'job_id');
     }
 
     public function worker()
@@ -27,7 +27,7 @@ class Order extends Model
 
     public function bid()
     {
-        return $this->belongsTo(ProjectBid::class, 'project_bid_id');
+        return $this->belongsTo(JobBid::class, 'job_bid_id');
     }
 
 

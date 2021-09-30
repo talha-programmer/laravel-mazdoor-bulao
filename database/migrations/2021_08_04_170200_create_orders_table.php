@@ -19,8 +19,8 @@ class CreateOrdersTable extends Migration
             $table->timestamp('starting_time')->useCurrent();
             $table->timestamp('ending_time')->nullable();
             $table->foreignId('worker_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
-            $table->foreignId('project_bid_id')->nullable()->constrained('project_bids')->nullOnDelete();
+            $table->foreignId('job_id')->constrained('work_jobs')->cascadeOnDelete();
+            $table->foreignId('job_bid_id')->nullable()->constrained('job_bids')->nullOnDelete();
         });
     }
 

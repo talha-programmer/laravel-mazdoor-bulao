@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProjectCategory extends Model
+class JobCategory extends Model
 {
     use HasFactory;
     public $timestamps = false;
@@ -14,8 +14,8 @@ class ProjectCategory extends Model
         'name',
     ];
 
-    public function projects()
+    public function jobs()
     {
-        return $this->belongsToMany(Project::class, 'projects_with_categories');
+        return $this->belongsToMany(Job::class, 'jobs_with_categories');
     }
 }

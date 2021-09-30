@@ -5,19 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Project extends Model
+class Job extends Model
 {
     use HasFactory;
+    protected $table = "work_jobs";
 
     protected $fillable = [
         'title',
         'details',
-        'has_allotted'
+        'budget',
+        'deadline',
+        'location',
+        'has_allotted',
+
     ];
 
     public function bids()
     {
-        return $this->hasMany(ProjectBid::class, 'project_id');
+        return $this->hasMany(JobBid::class, 'job_id');
     }
 
     public function orders()
@@ -32,13 +37,13 @@ class Project extends Model
 
     public function categories()
     {
-        return $this->belongsToMany(ProjectCategory::class, 'projects_with_categories');
+        return $this->belongsToMany(JobCategory::class, 'jobs_with_categories');
     }
 
     public function bidUsers()
     {
         //return $this->bids()->with('offeredBy');
-        //return $this->hasManyThrough(User::class, ProjectBid::class, 'project_id', 'offered_by');
+        //return $this->hasManyThrough(User::class, JobBid::class, 'project_id', 'offered_by');
     }
 
 
