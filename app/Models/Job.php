@@ -40,11 +40,7 @@ class Job extends Model
         return $this->belongsToMany(JobCategory::class, 'jobs_with_categories');
     }
 
-    public function bidUsers()
-    {
-        //return $this->bids()->with('offeredBy');
-        //return $this->hasManyThrough(User::class, JobBid::class, 'project_id', 'offered_by');
-    }
+
 
 
 

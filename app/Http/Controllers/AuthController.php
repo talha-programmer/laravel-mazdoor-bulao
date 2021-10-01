@@ -89,4 +89,22 @@ class AuthController extends Controller
             'info' => 'logged out successfully!',
         ];
     }
+
+    // TODO: Test this method
+    public function changePassword(Request $request)
+    {
+        $fields = $request->validate([
+            'current_password' => 'required|string|max:255',
+            'new_password' => 'required|string|max:255'
+        ]);
+
+        $user = auth()->user();
+        if(!Hash::check($fields['current_password'], $user->password)){
+            return response(['error' => 'Your current password is incorrect. Try again!'], 403);
+        } else{
+            $user->password = Hash::make($fields['new_password']);
+            $user->save();
+            return response(['info'=> 'Password changed successfully'], 200);
+        }
+    }
 }

@@ -20,9 +20,9 @@ class CreateWorkJobsTable extends Migration
             $table->text('details');
             $table->float('budget');
             $table->string('location');
-            $table->string('deadline');
+            $table->integer('deadline');        // in days
             $table->foreignId('posted_by')->constrained('users')->cascadeOnDelete();
-            $table->boolean('has_allotted')->nullable();
+            $table->integer('status');
         });
     }
 

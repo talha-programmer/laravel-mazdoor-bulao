@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class JobBid extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'offered_amount',
+        'details'
+    ];
 
     public function job()
     {

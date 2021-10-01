@@ -44,6 +44,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * Jobs posted by the user
+     */
     public function jobs()
     {
         return $this->hasMany(Job::class, 'posted_by' );
@@ -64,12 +67,17 @@ class User extends Authenticatable
         return $this->hasMany(JobBid::class, 'offered_by');
     }
 
+    /**
+      * Jobs on which this user has created any bid
+     */
     public function appliedJobs(): array
     {
         // Return applied jobs as [{'job_id', job}] (job_id as indexes of the array)
         $appliedJobs = [];
         $bids = $this->bids()->with('job')->get();
 
+        // We can do that to apply any where clause on job in this case
+        //$bids = $this->bids()->with('job')->get()->where('job.budget' , '<', 10);
         foreach ($bids as $bid){
             $job = $bid->job;
             $appliedJobs[$job->id] = $job;

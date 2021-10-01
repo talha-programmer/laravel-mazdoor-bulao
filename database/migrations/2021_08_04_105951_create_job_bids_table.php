@@ -18,9 +18,10 @@ class CreateJobBidsTable extends Migration
             $table->timestamps();
             $table->float('offered_amount');
             $table->text('details');
+            $table->integer('completion_time');     // in days
             $table->foreignId('offered_by')->constrained('users')->cascadeOnDelete();
             $table->foreignId('job_id')->constrained('work_jobs')->cascadeOnDelete();
-
+            $table->integer('status');
         });
     }
 
