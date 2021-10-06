@@ -10,7 +10,9 @@ class JobBid extends Model
     use HasFactory;
     protected $fillable = [
         'offered_amount',
-        'details'
+        'details',
+        'status',
+        'completion_time'
     ];
 
     public function job()

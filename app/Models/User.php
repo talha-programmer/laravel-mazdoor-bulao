@@ -76,8 +76,6 @@ class User extends Authenticatable
         $appliedJobs = [];
         $bids = $this->bids()->with('job')->get();
 
-        // We can do that to apply any where clause on job in this case
-        //$bids = $this->bids()->with('job')->get()->where('job.budget' , '<', 10);
         foreach ($bids as $bid){
             $job = $bid->job;
             $appliedJobs[$job->id] = $job;
@@ -85,6 +83,11 @@ class User extends Authenticatable
 
         return $appliedJobs;
     }
+
+//    public function workingJobs()
+//    {
+//        return $this->bids()->with('job')->get()->where('job.status' ,'=', 0);
+//    }
 
 
 

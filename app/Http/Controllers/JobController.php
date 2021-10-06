@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\JobStatus;
 use App\Models\Job;
 
 use Illuminate\Http\Request;
@@ -43,7 +44,8 @@ class JobController extends Controller
             'details' => $details,
             'location' => $location,
             'deadline' => $deadline,
-            'budget' => $budget
+            'budget' => $budget,
+            'status' => JobStatus::AcceptingBids
         ]);
 
         $job->postedBy()->associate(auth()->user());

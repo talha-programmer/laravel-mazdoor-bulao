@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BidStatus;
 use App\Models\Job;
 use App\Models\JobBid;
 use Illuminate\Http\Request;
@@ -23,6 +24,7 @@ class JobBidController extends Controller
         $request->validate([
             'offered_amount' => 'required|digits_between:1,10000000',
             'details' => 'required',
+            'completion_time' => 'required|digits_between:1,365',   // completion time in days
             'job_id' => 'required|numeric|min:1',
             'job_bid_id' => 'numeric|min:1'                 // in case of edit
         ]);
@@ -49,8 +51,10 @@ class JobBidController extends Controller
 
         $bid->offered_amount = $request->offered_amount;
         $bid->details = $request->details;
+        $bid->status = BidStatus::Applied;
+        $bid->completion_time = $request->completion_time;
 
-        $bid->offeredBy()->associate(auth()->user());
+        $bid->offeredBy()->associate($user);
 
         $bid->save();
 

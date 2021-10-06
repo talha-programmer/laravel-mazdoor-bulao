@@ -17,6 +17,7 @@ class Job extends Model
         'deadline',
         'location',
         'has_allotted',
+        'status'
 
     ];
 

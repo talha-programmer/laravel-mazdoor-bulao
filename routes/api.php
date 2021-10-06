@@ -32,7 +32,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         return response($response, '200');
     });
 
-    //Route::post('/user/applied_jobs', [UserController::class, 'appliedJobs']);
+    Route::post('/user/applied_jobs', [UserController::class, 'appliedJobs']);
+    Route::post('/user/posted_jobs', [UserController::class, 'postedJobs']);
+    Route::post('/user/bids', [UserController::class, 'userBids']);
 
     Route::post('/store_job', [JobController::class, 'store'])->name('job.store');
     Route::delete('/destroy_job', [JobController::class, 'destroy'])->name('job.destroy');

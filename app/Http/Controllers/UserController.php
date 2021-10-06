@@ -11,11 +11,10 @@ class UserController extends Controller
         $this->middleware('auth')->only(['userBids', 'appliedJobs']);
     }
 
-    // TODO: Test this method
     public function userBids()
     {
         $user = auth()->user();
-        $bids = $user->bids();
+        $bids = $user->bids()->with('job')->get();
         $response = [
             'bids' => $bids
         ];
@@ -23,11 +22,31 @@ class UserController extends Controller
         return response($response, 200);
     }
 
+    public function appliedJobs()
+    {
+        $user = auth()->user();
+        $response = [
+            'applied_jobs' => $user->appliedJobs()
+        ];
+
+        return response($response, 200);
+    }
+
+    public function postedJobs()
+    {
+        $user = auth()->user();
+        $postedJobs = $user->jobs;
+        $response = [
+            'posted_jobs' => $postedJobs
+        ];
+        return response($response, 200);
+    }
+
 //    public function appliedJobs()
 //    {
 //        $user = auth()->user();
 //
-//        return $user->appliedJobs();
+//        return $user->workingJobs();
 //    }
 
 
