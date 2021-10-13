@@ -52,7 +52,10 @@ class User extends Authenticatable
         return $this->hasMany(Job::class, 'posted_by' );
     }
 
-    public function orders()
+    /**
+    * Job Orders on which this user is working / completed
+     */
+    public function sellingOrders()
     {
         return $this->hasMany(Order::class, 'worker_id');
     }
@@ -89,6 +92,11 @@ class User extends Authenticatable
 //        return $this->bids()->with('job')->get()->where('job.status' ,'=', 0);
 //    }
 
+
+    public function buyingOrders()
+    {
+        return $this->hasMany(Order::class, 'buyer_id');
+    }
 
 
 }

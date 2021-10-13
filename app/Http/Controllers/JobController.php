@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Enums\JobStatus;
 use App\Models\Job;
 
+use App\Models\JobCategory;
 use Illuminate\Http\Request;
+use Psy\Util\Str;
 
 
 class JobController extends Controller
@@ -30,7 +32,9 @@ class JobController extends Controller
             'details' => 'required',
             'budget' => 'required|numeric',
             'deadline' => 'required|numeric',
-            'location' => 'required|string|max:255'
+            'location' => 'required|string|max:255',
+            'categories' => 'required|string',
+            'job_id' => 'numeric|min:1'         // in case of edit
         ]);
 
         $title = $request->title;
@@ -39,17 +43,30 @@ class JobController extends Controller
         $deadline = $request->deadline;
         $location = $request->location;
 
-        $job = new Job([
+        $categories = explode(',' , $request->categories);
+        $jobId = $request->job_id;
+
+        $job = null;
+
+        if($jobId > 0){
+            $job = Job::find($jobId);
+            $job->categories()->detach();
+        } else {
+            $job = new Job();
+            $job->postedBy()->associate(auth()->user());
+        }
+
+        $job->fill([
             'title' => $title,
             'details' => $details,
             'location' => $location,
             'deadline' => $deadline,
             'budget' => $budget,
-            'status' => JobStatus::AcceptingBids
+            'status' => JobStatus::Hiring
         ]);
 
-        $job->postedBy()->associate(auth()->user());
         $job->save();
+        $job->categories()->attach($categories);
 
         return response(['info' => 'job has been created successfully!']);
     }
@@ -70,7 +87,7 @@ class JobController extends Controller
     public function singleJob(Job $job)
     {
         $response = [
-          'job' => $job->load(['postedBy', 'categories', 'bids', 'orders']),
+          'job' => $job->load(['postedBy', 'categories', 'bids.offeredBy', 'orders']),
         ];
 
         return response($response, 200);

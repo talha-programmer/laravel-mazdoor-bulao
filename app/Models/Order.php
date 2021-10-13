@@ -12,7 +12,7 @@ class Order extends Model
     protected $fillable = [
         'starting_time',
         'ending_time',
-
+        'status'
     ];
 
     public function job()
@@ -28,6 +28,11 @@ class Order extends Model
     public function bid()
     {
         return $this->belongsTo(JobBid::class, 'job_bid_id');
+    }
+
+    public function buyer()
+    {
+        return $this->belongsTo(User::class, 'buyer_id');
     }
 
 

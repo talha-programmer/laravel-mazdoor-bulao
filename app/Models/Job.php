@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Job extends Model
 {
@@ -18,8 +19,14 @@ class Job extends Model
         'location',
         'has_allotted',
         'status'
-
     ];
+
+    protected $appends = ['url'];
+
+    public function getUrlAttribute()
+    {
+        return Str::kebab($this->title .' ' . $this->id);
+    }
 
     public function bids()
     {

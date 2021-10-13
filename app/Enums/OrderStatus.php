@@ -9,9 +9,9 @@ use BenSampo\Enum\Enum;
  * @method static static OptionTwo()
  * @method static static OptionThree()
  */
-final class JobStatus extends Enum
+final class OrderStatus extends Enum
 {
-    const Hiring =   0;
-    const HiringCompleted =   1;     // One or more persons are hired for this job
-    const JobCompleted = 2;
+    const Started =   0;
+    const  Completed =   1;
+    const Failed = 2;
 }

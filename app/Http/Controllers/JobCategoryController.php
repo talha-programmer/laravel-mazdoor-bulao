@@ -14,7 +14,10 @@ class JobCategoryController extends Controller
 
     public function index()
     {
-        return JobCategory::all();
+        $response = [
+          'job_categories' => JobCategory::all()->toArray()
+        ];
+        return response($response, 200);
     }
 
     public function store(Request $request)

@@ -45,15 +45,18 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/job_bids/{job}', [JobBidController::class, 'jobBids']);
 
-    Route::post('/orders', [OrderController::class, 'workerOrders']);
+    Route::post('/selling_orders', [OrderController::class, 'sellingOrders']);
+    Route::post('/buying_orders', [OrderController::class, 'buyingOrders']);
 
-    Route::post('/store_order', [OrderController::class, 'store']);
+    Route::post('/start_order', [OrderController::class, 'startOrder']);
 });
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/jobs', [JobController::class, 'index'])->name('jobs');
-Route::post('/job/{job}', [JobController::class, 'singleJob'])->name('job');
+Route::post('/jobs/{job}', [JobController::class, 'singleJob'])->name('job');
+
+Route::post('/job_categories', [JobCategoryController::class, 'index']);
 
 Route::post('/order/{order}', [OrderController::class, 'singleOrder']);

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BidStatus;
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\Job;
 use App\Models\JobBid;
@@ -10,6 +12,12 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['auth']);
+    }
+
     public function index()
     {
         return Order::all();
@@ -20,33 +28,53 @@ class OrderController extends Controller
         return $order;
     }
 
-    public function workerOrders()
+    public function sellingOrders()
     {
         $worker = auth()->user();
-        return $worker->orders;
+        $orders =  $worker->sellingOrders()->with(['job', 'bid', 'buyer'])->get();
+        $response = [
+            'selling_orders' => $orders,
+        ];
+        return response($response, 200);
     }
 
-    public function store(Request $request)
+    public function startOrder(Request $request)
     {
         $request->validate([
             'job_id' => 'required|numeric|min:1',
             'job_bid_id' => 'required|numeric|min:1',
-            'worker_id' => 'required|numeric|min:1',
-
         ]);
 
         $bid = JobBid::find($request->job_bid_id);
         $job = Job::find($request->job_id);
-        $worker = User::find($request->worker_id);
+        $worker = $bid->offeredBy;
 
         $order = new Order();
         $order->bid()->associate($bid);
         $order->job()->associate($job);
         $order->worker()->associate($worker);
-
+        $order->buyer()->associate($job->postedBy);
+        $order->status = OrderStatus::Started;
         $order->save();
+
+        $bid->status = BidStatus::Accepted;
+        $bid->save();
 
         return response(['info' => 'Order created successfully!'], 200);
 
+    }
+
+    /**
+     * Orders on which currently logged-in user has hired other workers
+    */
+    public function buyingOrders()
+    {
+        $user = auth()->user();
+        $buyingOrders = $user->buyingOrders()->with(['job' , 'worker', 'bid'])->get();
+        $response = [
+            'buying_orders' => $buyingOrders,
+        ];
+
+        return response($response, 200);
     }
 }
