@@ -98,5 +98,15 @@ class User extends Authenticatable
         return $this->hasMany(Order::class, 'buyer_id');
     }
 
+    public function workerProfile()
+    {
+        return $this->hasOne(WorkerProfile::class, 'user_id');
+    }
+
+    public function buyerProfile()
+    {
+        return $this->hasOne(BuyerProfile::class, 'user_id');
+    }
+
 
 }

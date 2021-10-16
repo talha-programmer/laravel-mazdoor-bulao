@@ -15,6 +15,15 @@ class Order extends Model
         'status'
     ];
 
+    protected $appends = [
+        'url'
+    ];
+
+    public function getUrlAttribute()
+    {
+        return $this->starting_time . '-' . $this->id;
+    }
+
     public function job()
     {
         return $this->belongsTo(Job::class, 'job_id');
