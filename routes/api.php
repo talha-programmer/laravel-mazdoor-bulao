@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\JobBidController;
 use App\Http\Controllers\JobCategoryController;
@@ -35,6 +36,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/user/applied_jobs', [UserController::class, 'appliedJobs']);
     Route::post('/user/posted_jobs', [UserController::class, 'postedJobs']);
     Route::post('/user/bids', [UserController::class, 'userBids']);
+
+    Route::post('/chat_users', [UserController::class, 'chatUsers']);
+
+    Route::post('/chat/add_in_chat', [ChatController::class, 'addInChat']);
+    Route::post('/chat/chat_with/{user:id}', [ChatController::class, 'chatWithUser']);
+
+    Route::post('/chat/send_message', [ChatController::class, 'sendMessage']);
 
     Route::post('/store_job', [JobController::class, 'store'])->name('job.store');
     Route::delete('/destroy_job', [JobController::class, 'destroy'])->name('job.destroy');

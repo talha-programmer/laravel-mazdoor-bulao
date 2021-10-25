@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -48,6 +49,17 @@ class UserController extends Controller
 //
 //        return $user->workingJobs();
 //    }
+
+
+    public function chatUsers()
+    {
+        $user = auth()->user();
+        $response = [
+            'chat_users' => $user->allowedChats()
+        ];
+
+        return response($response, 200);
+    }
 
 
 }

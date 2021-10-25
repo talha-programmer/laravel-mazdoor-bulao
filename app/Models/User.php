@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use http\Env\Request;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -107,6 +108,74 @@ class User extends Authenticatable
     {
         return $this->hasOne(BuyerProfile::class, 'user_id');
     }
+
+    public function messagesSent()
+    {
+        return $this->hasMany(Message::class, 'from');
+    }
+
+    public function messagesReceived()
+    {
+        return $this->hasMany(Message::class, 'to');
+    }
+
+    public function allowedChat1()
+    {
+        return $this->hasMany(AllowedChat::class, 'user_1');
+    }
+
+    public function allowedChat2()
+    {
+        return $this->hasMany(AllowedChat::class, 'user_2');
+    }
+
+    /**
+     * Return the array of the users to which chat is allowed for the current user
+     * The keys of the array are the ids of the users
+     */
+    public function allowedChats(): array
+    {
+        $chat1 = $this->allowedChat1()->with(['user2'])->get();
+        $chat2 = $this->allowedChat2()->with(['user1'])->get();
+        $allowedChats = [];
+
+        foreach ($chat1 as $chat) {
+            $user = $chat->user2;
+            $allowedChats[$user->id] = $user;
+        }
+
+        foreach ($chat2 as $chat) {
+            $user = $chat->user1;
+            if(!array_key_exists( $user->id, $allowedChats)){
+                $allowedChats[$user->id] = $user;
+            }
+        }
+
+        return $allowedChats;
+    }
+
+    /**
+    * Return sent and received messages of this user to / from the userId passed in parameter
+     */
+    public function chatWithUser($userId)
+    {
+        $secondUser = User::findorFail($userId);
+
+
+        $messagesReceived = $this->messagesReceived()->where('from','=', $userId)->get()->toArray();
+        $messagesSent = $this->messagesSent()->where('to', '=', $userId)->get()->toArray();
+
+        $allMessages =  array_merge($messagesReceived, $messagesSent);
+
+        // Sorting the array in ascending order with 'created_at'
+        // We can shift item1 and item2 to sort it in desc order
+        usort($allMessages, function ($item1, $item2) {
+            return $item1['created_at'] <=> $item2['created_at'];
+        });
+
+        return $allMessages;
+    }
+
 
 
 }
