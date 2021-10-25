@@ -12,6 +12,7 @@ use BenSampo\Enum\Enum;
 final class OrderStatus extends Enum
 {
     const Started =   0;
-    const  Completed =   1;
-    const Failed = 2;
+    const RequestedForCompletion = 1;
+    const  Completed =   2;
+    const Failed = 3;
 }

@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Job;
 use App\Models\JobBid;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -76,5 +77,45 @@ class OrderController extends Controller
         ];
 
         return response($response, 200);
+    }
+
+    /**
+    * Called when a buyer mark the order as complete
+     */
+    public function completeOrder(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required|numeric|min:1',
+        ]);
+
+        $order = Order::findOrFail($request->order_id);
+
+        // Ending time will be only added here if the buyer directly mark
+        // the order as complete without any request from seller
+        if($order->status == OrderStatus::Started) {
+            $order->ending_time = Carbon::now()->timestamp;
+        }
+        $order->status = OrderStatus::Completed;
+        $order->save();
+
+        return response(['status' => 'Order completed successfully!'], 200);
+    }
+
+    /**
+     * Called when a seller create an order completion request
+     * buyer will mark the order as completed, finally
+     */
+    public function completionRequest(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required|numeric|min:1',
+        ]);
+
+        $order = Order::findOrFail($request->order_id);
+        $order->status = OrderStatus::RequestedForCompletion;
+        $order->ending_time = Carbon::now()->timestamp;
+        $order->save();
+
+        return response(['status' => 'Order marked as completed from buyer!'], 200);
     }
 }
