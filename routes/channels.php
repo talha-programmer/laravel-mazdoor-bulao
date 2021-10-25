@@ -16,3 +16,10 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+
+Broadcast::channel('chat.with.{userId}', function ($loggedInUser, $secondUserId){
+    // Check if the logged-in user is allowed to chat with the user id passed
+   //return array_key_exists($secondUserId, $loggedInUser->allowedChats());
+
+    return true;
+});
