@@ -61,10 +61,7 @@ class User extends Authenticatable
         return $this->hasMany(Order::class, 'worker_id');
     }
 
-    public function skills()
-    {
-        return $this->belongsToMany(Skill::class, 'worker_skills');
-    }
+
 
     public function bids()
     {
@@ -175,6 +172,18 @@ class User extends Authenticatable
 
         return $allMessages;
     }
+
+    public function reviewsGiven()
+    {
+        return $this->hasMany(Review::class, 'given_by');
+    }
+
+    public function reviewsReceived()
+    {
+        return $this->hasMany(Review::class, 'given_to');
+    }
+
+
 
 
 
