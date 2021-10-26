@@ -6,7 +6,9 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\JobBidController;
 use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\SkillController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WorkerProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,6 +38,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/user/applied_jobs', [UserController::class, 'appliedJobs']);
     Route::post('/user/posted_jobs', [UserController::class, 'postedJobs']);
     Route::post('/user/bids', [UserController::class, 'userBids']);
+
+    Route::post('/user/store_worker_profile', [WorkerProfileController::class, 'store']);
+    Route::post('/user/worker_profile', [WorkerProfileController::class, 'index']);
+
+    //Route::post('/worker_skills', [SkillController::class, 'index']);
 
     Route::post('/chat_users', [UserController::class, 'chatUsers']);
 

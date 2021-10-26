@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Skill;
 use App\Models\User;
+use App\Models\WorkerProfile;
 use Illuminate\Http\Request;
 
 class WorkerProfileController extends Controller
@@ -14,7 +16,7 @@ class WorkerProfileController extends Controller
 
     public function index()
     {
-        $profile = auth()->user()->workerProfile;
+        $profile = auth()->user()->workerProfile()->with('skills')->first();
         return response(['worker_profile' => $profile], 200);
     }
 
@@ -22,13 +24,27 @@ class WorkerProfileController extends Controller
     {
         $request->validate([
             'description' => 'required',
-            'is_edit' => 'boolean'
+            'is_edit' => 'boolean',
+            'skills' => 'required|string'
         ]);
 
         $user = auth()->user();
-        $user->workerProfile()->create([
-            'description' => $request->description,
-        ]);
+        $skills = explode(',', $request->skills);
+
+
+        $profile = WorkerProfile::where('user_id', '=', $user->id)->first();
+        if($profile){
+            // in case of edit
+            $profile->skills()->detach();
+        }else{
+            $profile = new WorkerProfile();
+            $profile->user()->associate($user);
+        }
+
+        $profile->description = $request->description;
+        $profile->save();
+
+        $profile->skills()->attach($skills);
 
         return response(['status' => 'Profile created successfully!'], 200);
     }

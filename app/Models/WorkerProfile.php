@@ -14,6 +14,14 @@ class WorkerProfile extends Model
 
     use HasFactory;
 
+    /**
+     * Job Categories are also represented as worker skills
+     */
+    public function skills()
+    {
+        return $this->belongsToMany(JobCategory::class, 'workers_with_skills', 'worker_profile_id', 'skill_id');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
