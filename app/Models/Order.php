@@ -44,5 +44,9 @@ class Order extends Model
         return $this->belongsTo(User::class, 'buyer_id');
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'order_id');
+    }
 
 }
