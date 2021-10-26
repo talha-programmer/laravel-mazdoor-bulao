@@ -18,4 +18,13 @@ class JobCategory extends Model
     {
         return $this->belongsToMany(Job::class, 'jobs_with_categories');
     }
+
+    /**
+     * Job Categories are also represented as worker skills
+     * to filter the jobs with worker skills
+     */
+    public function workers()
+    {
+        return $this->belongsToMany(WorkerProfile::class, 'workers_with_skills', 'skill_id', 'worker_profile_id');
+    }
 }
