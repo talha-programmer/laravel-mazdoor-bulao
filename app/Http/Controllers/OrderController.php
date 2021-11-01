@@ -24,9 +24,12 @@ class OrderController extends Controller
         return Order::all();
     }
 
-    public function singleOrder(Order $order)
+    public function singleOrder($orderId)
     {
-        return $order;
+        $order = Order::findOrFail($orderId);
+        $order->load(['worker', 'buyer', 'job', 'bid']);
+        $response = ['order' => $order];
+        return response($response, 200);
     }
 
     public function sellingOrders()
@@ -93,7 +96,7 @@ class OrderController extends Controller
         // Ending time will be only added here if the buyer directly mark
         // the order as complete without any request from seller
         if($order->status == OrderStatus::Started) {
-            $order->ending_time = Carbon::now()->timestamp;
+            $order->ending_time = Carbon::now()->format('Y-m-d H:i:s');
         }
         $order->status = OrderStatus::Completed;
         $order->save();
@@ -113,7 +116,7 @@ class OrderController extends Controller
 
         $order = Order::findOrFail($request->order_id);
         $order->status = OrderStatus::RequestedForCompletion;
-        $order->ending_time = Carbon::now()->timestamp;
+        $order->ending_time = Carbon::now()->format('Y-m-d H:i:s');
         $order->save();
 
         return response(['status' => 'Order marked as completed from seller!'], 200);
