@@ -32,18 +32,29 @@ class WorkerProfile extends Model
      /**
      * Reviews which are given by this worker to other buyers
       */
-    public function reviewsGiven()
+    public static function reviewsGiven(User $user)
     {
-        $user = $this->user()->getModel();
         return $user->reviewsGiven()->where('review_type' , '=', ReviewType::FromWorkerToBuyer)->get();
     }
 
     /**
     * Reviews which are received by this worker from other buyers
      */
-    public function reviewsReceived()
+    public static function reviewsReceived(User $user)
     {
-        $user = $this->user()->getModel();
         return $user->reviewsReceived()->where('review_type' , '=', ReviewType::FromBuyerToWorker)->get();
     }
+
+    public static function getWorkerProfile($userId)
+    {
+        return WorkerProfile::where('user_id', '=', $userId)->first();
+    }
+
+    public static function getWorkerSkillIds($userId)
+    {
+        $workerProfile = WorkerProfile::getWorkerProfile($userId);
+        $skills = $workerProfile->skills()->get()->toArray();
+        return array_column($skills, 'id');
+    }
+
 }

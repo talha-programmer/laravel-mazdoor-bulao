@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class Job extends Model
@@ -48,6 +49,16 @@ class Job extends Model
         return $this->belongsToMany(JobCategory::class, 'jobs_with_categories');
     }
 
+    /**
+     * Fetch jobs filtered by the category Ids provided.
+     */
+    public static function jobWithCategoryIds(array $categoryIds)
+    {
+        return Job::query()
+            ->join('jobs_with_categories', 'work_jobs.id', '=', 'jobs_with_categories.job_id')
+            ->whereIn('jobs_with_categories.job_category_id', $categoryIds)
+            ->get()->unique();
+    }
 
 
 

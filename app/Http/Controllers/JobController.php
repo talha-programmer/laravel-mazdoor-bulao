@@ -6,7 +6,9 @@ use App\Enums\JobStatus;
 use App\Models\Job;
 
 use App\Models\JobCategory;
+use App\Models\WorkerProfile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Psy\Util\Str;
 
 
@@ -19,10 +21,20 @@ class JobController extends Controller
 
     public function index()
     {
-        $jobs = Job::with('postedBy')->latest()->get();
+        // TODO Fix this, unable to get filtered jobs in case of logged in
+        $jobs = null;
 
-        return $jobs->toArray();
+        if(Auth::check()){
+           $loggedInUserId = Auth::user()->id;
+            $jobs = Job::where('posted_by', '!=', $loggedInUserId)->with(['postedBy', 'categories'])->latest()->get();
+        } else {
+            $jobs = Job::with(['postedBy', 'categories'])->latest()->get();
+        }
+        $response = [
+            'jobs' => $jobs->toArray(),
+        ];
 
+        return response($response, 200);
     }
 
     public function store(Request $request)
@@ -90,6 +102,21 @@ class JobController extends Controller
           'job' => $job->load(['postedBy', 'categories', 'bids.offeredBy', 'orders']),
         ];
 
+        return response($response, 200);
+    }
+
+    /**
+     * Get the jobs filtered by the skills of the logged-in worker
+     */
+    // TODO create a function to manage logged-in as well as logged-out scenario for fetching jobs
+    public function jobsWithSkills()
+    {
+        $user = auth()->user();
+        $skillIds = WorkerProfile::getWorkerSkillIds($user->id);
+        $jobs = Job::jobWithCategoryIds($skillIds)->filter(function ($job) use($user){
+            return $job->posted_by != $user->id;
+        })->toArray();
+        $response = ['jobs' => $jobs];
         return response($response, 200);
     }
 
