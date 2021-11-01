@@ -9,7 +9,8 @@ class Review extends Model
 {
     protected $fillable = [
         'review_text',
-        'rating'
+        'rating',
+        'review_type'
     ];
     use HasFactory;
 
@@ -27,5 +28,17 @@ class Review extends Model
     {
         return $this->belongsTo(User::class, 'given_to');
     }
+
+    public static function getOrderReviews($orderId, $reviewType = null)
+    {
+        if($reviewType){
+            return Review::where('order_id' , '=', $orderId)
+                ->where('review_type', '=', $reviewType)->with(['givenBy', 'givenTo'])->get();
+        }else{
+            return Review::where('order_id' , '=', $orderId)->with(['givenBy', 'givenTo'])->get();
+        }
+    }
+
+
 
 }

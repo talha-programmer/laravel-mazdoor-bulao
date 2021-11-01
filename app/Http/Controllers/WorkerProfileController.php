@@ -49,5 +49,29 @@ class WorkerProfileController extends Controller
         return response(['status' => 'Profile created successfully!'], 200);
     }
 
+    public function getReviewsGiven(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|numeric|min:1',
+        ]);
+        $user = User::findOrFail($request->user_id);
+        $reviewsGiven = WorkerProfile::reviewsGiven($user);
+
+        $response = ['reviews_given' => $reviewsGiven];
+        return response($response, 200);
+    }
+
+    public function getReviewsReceived(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|numeric|min:1',
+        ]);
+        $user = User::findOrFail($request->user_id);
+        $reviewsReceived = WorkerProfile::reviewsReceived($user);
+
+        $response = ['reviews_received' => $reviewsReceived];
+        return response($response, 200);
+    }
+
 
 }

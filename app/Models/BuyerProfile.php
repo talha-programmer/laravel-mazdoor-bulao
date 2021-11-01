@@ -18,19 +18,19 @@ class BuyerProfile extends Model
     /**
      * Reviews which are given by this buyer to other workers
      */
-    // TODO test these two functions
-    public function reviewsGiven()
+    public static function reviewsGiven(User $user)
     {
-        $user = $this->user()->getModel();
-        return $user->reviewsGiven()->where('review_type' , '=', ReviewType::FromBuyerToWorker)->get();
+        return $user->reviewsGiven()
+            ->where('review_type' , '=', ReviewType::FromBuyerToWorker)
+            ->with(['givenBy', 'givenTo', 'order'])
+            ->get();
     }
 
     /**
      * Reviews which are received by this buyer from other workers
      */
-    public function reviewsReceived()
+    public static function reviewsReceived(User $user)
     {
-        $user = $this->user()->getModel();
         return $user->reviewsReceived()->where('review_type' , '=', ReviewType::FromWorkerToBuyer)->get();
     }
 }
