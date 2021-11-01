@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BuyerProfileController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\JobBidController;
 use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkerProfileController;
@@ -64,14 +66,28 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/buying_orders', [OrderController::class, 'buyingOrders']);
 
     Route::post('/start_order', [OrderController::class, 'startOrder']);
+    Route::post('/complete_buying_order', [OrderController::class, 'completeOrder']);
+    Route::post('/complete_selling_order', [OrderController::class, 'completionRequest']);
+
+    Route::post('/send_review', [ReviewController::class, 'store']);
+    Route::post('/order_reviews', [ReviewController::class, 'getOrderReviews']);
+
+    Route::post('/worker_reviews_given', [WorkerProfileController::class, 'getReviewsGiven']);
+    Route::post('/worker_reviews_received', [WorkerProfileController::class, 'getReviewsReceived']);
+
+    Route::post('/buyer_reviews_given', [BuyerProfileController::class, 'getReviewsGiven']);
+    Route::post('/buyer_reviews_received', [BuyerProfileController::class, 'getReviewsReceived']);
+
+    Route::post('/order/{order}', [OrderController::class, 'singleOrder']);
+
+    Route::post('/jobs', [JobController::class, 'jobsWithSkills'])->name('jobs');
+
 });
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::post('/jobs', [JobController::class, 'index'])->name('jobs');
 Route::post('/jobs/{job}', [JobController::class, 'singleJob'])->name('job');
 
 Route::post('/job_categories', [JobCategoryController::class, 'index']);
 
-Route::post('/order/{order}', [OrderController::class, 'singleOrder']);
