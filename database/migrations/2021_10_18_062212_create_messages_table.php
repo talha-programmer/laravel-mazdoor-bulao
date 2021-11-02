@@ -18,7 +18,7 @@ class CreateMessagesTable extends Migration
             $table->timestamps();
             $table->foreignId('from')->constrained('users')->cascadeOnDelete();
             $table->foreignId('to')->constrained('users')->cascadeOnDelete();
-            $table->text('message');
+            $table->text('message_text');
             $table->integer('message_type');
             $table->string('attachment_url')->nullable();
 

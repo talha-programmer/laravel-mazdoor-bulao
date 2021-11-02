@@ -41,7 +41,7 @@ class ChatController extends Controller
         $sendTo = User::findOrFail($request->to);
 
         $message = new Message();
-        $message->message = $messageText;
+        $message->message_text = $messageText;
         $message->message_type = MessageType::Text;     //TODO: Will change latter
         //$message->to()->associate($sendTo);
         //$message->from()->associate(auth()->user());
