@@ -34,7 +34,9 @@ class WorkerProfile extends Model
       */
     public static function reviewsGiven(User $user)
     {
-        return $user->reviewsGiven()->where('review_type' , '=', ReviewType::FromWorkerToBuyer)->get();
+        return $user->reviewsGiven()
+            ->where('review_type' , '=', ReviewType::FromWorkerToBuyer)
+            ->with(['givenBy:id,name', 'givenTo:id,name']);
     }
 
     /**
@@ -42,7 +44,9 @@ class WorkerProfile extends Model
      */
     public static function reviewsReceived(User $user)
     {
-        return $user->reviewsReceived()->where('review_type' , '=', ReviewType::FromBuyerToWorker)->get();
+        return $user->reviewsReceived()
+            ->where('review_type' , '=', ReviewType::FromBuyerToWorker)
+            ->with(['givenBy:id,name', 'givenTo:id,name']);
     }
 
     public static function getWorkerProfile($userId)
@@ -52,9 +56,13 @@ class WorkerProfile extends Model
 
     public static function getWorkerSkillIds($userId)
     {
+        $skillIds = null;
         $workerProfile = WorkerProfile::getWorkerProfile($userId);
-        $skills = $workerProfile->skills()->get()->toArray();
-        return array_column($skills, 'id');
+        if($workerProfile){
+            $skills = $workerProfile->skills()->get()->toArray();
+            $skillIds = array_column($skills, 'id');
+        }
+        return $skillIds;
     }
 
 }
