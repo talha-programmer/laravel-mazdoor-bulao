@@ -183,6 +183,15 @@ class User extends Authenticatable
         return $this->hasMany(Review::class, 'given_to');
     }
 
+    public function appNotifications()
+    {
+        return $this->hasMany(Notification::class, 'user_id');
+    }
+
+    public function profileImage()
+    {
+        return $this->morphOne(Image::class, 'imageable', 'imageable_type', 'imageable_id');
+    }
 
 
 
