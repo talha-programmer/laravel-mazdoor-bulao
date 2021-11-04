@@ -16,7 +16,10 @@ class WorkerProfileController extends Controller
 
     public function index()
     {
-        $profile = auth()->user()->workerProfile()->with('skills')->first();
+        $user = auth()->user();
+        $profile = $user->workerProfile()->with('skills')->first();
+        $reviews = WorkerProfile::reviewsReceived($user)->latest()->limit(5)->get();
+        $profile->reviews = $reviews;
         return response(['worker_profile' => $profile], 200);
     }
 
