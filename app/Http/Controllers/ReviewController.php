@@ -59,6 +59,26 @@ class ReviewController extends Controller
         $review->order()->associate($order);
 
         if($review->save()){
+            // Update the rating of the user who has received the review
+            $profile = null;
+            if($review->review_type === ReviewType::FromWorkerToBuyer){
+                $profile = BuyerProfile::getBuyerProfile($review->given_to);
+
+            }else if($review->review_type == ReviewType::FromBuyerToWorker){
+                $profile = WorkerProfile::getWorkerProfile($review->given_to);
+            }
+
+            if($profile){
+                $profileRating = $profile->rating;
+                $newRating = null;
+                if($profileRating == null || $profileRating == 0){
+                    $newRating = $review->rating;
+                }else{
+                    $newRating =  ($profileRating + $review->rating) / 2.0;
+                }
+                $profile->rating = $newRating;
+                $profile->save();
+            }
             return response(['status' => 'Review Saved'], 200);
         }
 
