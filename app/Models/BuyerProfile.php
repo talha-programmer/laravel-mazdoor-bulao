@@ -33,4 +33,25 @@ class BuyerProfile extends Model
     {
         return $user->reviewsReceived()->where('review_type' , '=', ReviewType::FromWorkerToBuyer)->get();
     }
+
+    public static function createBuyerProfile($userId)
+    {
+        $buyerProfile = new BuyerProfile();
+        $buyerProfile->user_id = $userId;
+        $buyerProfile->rating = 0;
+        if($buyerProfile->save()){
+            return $buyerProfile;
+        }
+        return null;
+    }
+
+    public static function getBuyerProfile($userId)
+    {
+        $buyerProfile = BuyerProfile::where('user_id', '=', $userId)->first();
+        if($buyerProfile){
+            return $buyerProfile;
+        }else{
+            return BuyerProfile::createBuyerProfile($userId);
+        }
+    }
 }
