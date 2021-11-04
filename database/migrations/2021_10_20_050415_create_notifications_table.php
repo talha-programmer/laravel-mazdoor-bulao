@@ -19,7 +19,7 @@ class CreateNotificationsTable extends Migration
             $table->boolean('is_opened');
             $table->integer('notifiable_id');
             $table->string('notifiable_type');
-
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
         });
     }
 

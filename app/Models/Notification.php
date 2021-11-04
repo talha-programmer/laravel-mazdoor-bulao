@@ -14,6 +14,11 @@ class Notification extends Model
         return $this->morphTo(__FUNCTION__, 'notifiable_type', 'notifiable_id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
 
 
 }
