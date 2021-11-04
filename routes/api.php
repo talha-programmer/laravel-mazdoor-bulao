@@ -8,7 +8,6 @@ use App\Http\Controllers\JobBidController;
 use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\SkillController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkerProfileController;
 use Illuminate\Support\Facades\Route;
@@ -80,14 +79,15 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/order/{order}', [OrderController::class, 'singleOrder']);
 
-    Route::post('/jobs', [JobController::class, 'jobsWithSkills'])->name('jobs');
 
 });
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::post('/jobs/{job}', [JobController::class, 'singleJob'])->name('job');
+Route::post('/jobs', [JobController::class, 'index']);
+
+Route::post('/jobs/{job}', [JobController::class, 'singleJob']);
 
 Route::post('/job_categories', [JobCategoryController::class, 'index']);
 
