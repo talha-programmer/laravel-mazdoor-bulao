@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use const http\Client\Curl\AUTH_ANY;
 
 class Job extends Model
 {
@@ -54,9 +56,15 @@ class Job extends Model
      */
     public static function jobWithCategoryIds(array $categoryIds)
     {
+        $loggedInUserId = -1;
+        if(Auth::check()){
+            $loggedInUserId = Auth::id();
+        }
         return Job::query()
+            ->where('posted_by', '!=' , $loggedInUserId)
             ->join('jobs_with_categories', 'work_jobs.id', '=', 'jobs_with_categories.job_id')
             ->whereIn('jobs_with_categories.job_category_id', $categoryIds)
+            ->latest()
             ->get()->unique();
     }
 
