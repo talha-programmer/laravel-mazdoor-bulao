@@ -51,6 +51,11 @@ class Job extends Model
         return $this->belongsToMany(JobCategory::class, 'jobs_with_categories');
     }
 
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable', 'imageable_type', 'imageable_id' );
+    }
+
     /**
      * Fetch jobs filtered by the category Ids provided.
      */
