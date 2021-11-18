@@ -151,28 +151,6 @@ class User extends Authenticatable
         return $allowedChats;
     }
 
-    /**
-    * Return sent and received messages of this user to / from the userId passed in parameter
-     */
-    public function chatWithUser($userId)
-    {
-        $secondUser = User::findorFail($userId);
-
-
-        $messagesReceived = $this->messagesReceived()->where('from','=', $userId)->get()->toArray();
-        $messagesSent = $this->messagesSent()->where('to', '=', $userId)->get()->toArray();
-
-        $allMessages =  array_merge($messagesReceived, $messagesSent);
-
-        // Sorting the array in ascending order with 'created_at'
-        // We can shift item1 and item2 to sort it in desc order
-        usort($allMessages, function ($item1, $item2) {
-            return $item1['created_at'] <=> $item2['created_at'];
-        });
-
-        return $allMessages;
-    }
-
     public function reviewsGiven()
     {
         return $this->hasMany(Review::class, 'given_by');

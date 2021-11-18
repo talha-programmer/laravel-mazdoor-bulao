@@ -34,5 +34,20 @@ class Message extends Model
         );
     }
 
+    public static function chatBetweenUsers($userId1, $userId2)
+    {
+        return Message::query()
+            ->where([
+                ['to', '=', $userId1],
+                ['from', '=', $userId2],
+            ])->orWhere([
+                ['to', '=', $userId2],
+                ['from', '=', $userId1]
+            ])->latest()
+            ->limit(100)
+            ->get()
+            ->toArray();
+    }
+
 
 }

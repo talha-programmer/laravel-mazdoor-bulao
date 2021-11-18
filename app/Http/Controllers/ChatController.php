@@ -22,9 +22,13 @@ class ChatController extends Controller
      */
     public function chatWithUser( $secondUserId)
     {
-        $loggedInUser = auth()->user();
+        $loggedInUser = auth()->id();
+        $messages = Message::chatBetweenUsers($loggedInUser, $secondUserId);
+
+        // reverse the array to get the latest messages at the end
+        $messages = array_reverse($messages);
         $response = [
-            'chat' => $loggedInUser->chatWithUser($secondUserId),
+            'chat' => $messages,
         ];
 
         return response($response, 200);
