@@ -29,16 +29,17 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::post('/user', function () {
-        $response = [
-            'user' => auth()->user()
-        ];
-        return response($response, '200');
-    });
+    Route::post('/user', [UserController::class, 'user']);
 
     Route::post('/user/applied_jobs', [UserController::class, 'appliedJobs']);
     Route::post('/user/posted_jobs', [UserController::class, 'postedJobs']);
+
+    Route::post('/user/posted_jobs/{job}', [JobController::class, 'singleJobPosted']);
+
+
     Route::post('/user/bids', [UserController::class, 'userBids']);
+
+    Route::post('/user/store_user_profile', [UserController::class, 'storeUserProfile']);
 
     Route::post('/user/store_worker_profile', [WorkerProfileController::class, 'store']);
     Route::post('/user/worker_profile', [WorkerProfileController::class, 'index']);
