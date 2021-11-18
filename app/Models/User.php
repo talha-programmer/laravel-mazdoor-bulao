@@ -24,6 +24,8 @@ class User extends Authenticatable
         'password',
         'username',
         'user_type',
+        'phone_number',
+        'location'
     ];
 
     /**
@@ -138,12 +140,14 @@ class User extends Authenticatable
 
         foreach ($chat1 as $chat) {
             $user = $chat->user2;
+            $user->load(['profileImage']);
             $allowedChats[$user->id] = $user;
         }
 
         foreach ($chat2 as $chat) {
             $user = $chat->user1;
             if(!array_key_exists( $user->id, $allowedChats)){
+                $user->load(['profileImage']);
                 $allowedChats[$user->id] = $user;
             }
         }
