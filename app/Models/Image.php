@@ -9,16 +9,20 @@ use Illuminate\Support\Facades\URL;
 class Image extends Model
 {
     use HasFactory;
+    protected $appends = [
+      'image_url',
+      'image_thumbnail_url'
+    ];
 
     // Get full URL of the image and thumbnail
-    public function getImageUrlAttribute($imageUrl)
+    public function getImageUrlAttribute()
     {
-        return URL::to('/'). "/$imageUrl";
+        return URL::to('/'). "/$this->image_path";
     }
 
-    public function getImageThumbnailUrlAttribute($thumbnailUrl)
+    public function getImageThumbnailUrlAttribute()
     {
-        return URL::to('/'). "/$thumbnailUrl";
+        return URL::to('/'). "/$this->image_thumbnail_path";
     }
 
     public function imageable()
