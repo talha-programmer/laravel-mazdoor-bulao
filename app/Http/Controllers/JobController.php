@@ -3,15 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Enums\JobStatus;
-use App\Models\Image;
+use App\Models\BuyerProfile;
 use App\Models\Job;
 
-use App\Models\JobCategory;
 use App\Models\WorkerProfile;
+use App\Util\ImageUtil;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image as ImageLibrary;
 
 
 class JobController extends Controller
@@ -35,11 +32,11 @@ class JobController extends Controller
                 $jobs = Job::jobWithCategoryIds($skillIds);
 
             } else{
-                $jobs = Job::where('posted_by', '!=', $user->id)->with(['postedBy', 'categories'])->latest()->get();
+                $jobs = Job::where('posted_by', '!=', $user->id)->with(['postedBy:id,name', 'categories'])->latest()->get();
             }
         }
         else{
-            $jobs = Job::with(['postedBy', 'categories'])->latest()->get();
+            $jobs = Job::with(['postedBy:id,name', 'categories'])->latest()->get();
         }
         $response = ['jobs' => $jobs->toArray()];
         return response($response, 200);
@@ -79,6 +76,20 @@ class JobController extends Controller
         if($jobId > 0){
             $job = Job::find($jobId);
             $job->categories()->detach();
+
+            // detach images and delete them
+            $images = $job->images;
+            foreach ($images as $image){
+                $imagePath = public_path() . "/$image->image_path";
+                $thumbnailPath = public_path() . "/$image->image_thumbnail_path";
+                if(file_exists($imagePath)){
+                    unlink($imagePath);
+                }
+                if(file_exists($thumbnailPath)){
+                    unlink($thumbnailPath);
+                }
+            }
+            $job->images()->delete();
         } else {
             $job = new Job();
             $job->postedBy()->associate(auth()->user());
@@ -101,26 +112,13 @@ class JobController extends Controller
             if($noOfImages > 0){
                 for ($i=0; $i<$noOfImages; $i++){
                     // Upload images and create their relation
-                    $imageObject = new Image();
+
                     $loggedInUsername = auth()->user()->username;
 
                     $image = $request->file("image:" . $i);
-                    $imageName = time() . '-' . Str::kebab($image->getClientOriginalName());
                     $imageUrl = "images/jobs/{$loggedInUsername}";
 
-                    $thumbnail = ImageLibrary::make($image)->resize('250', null, function ($constraint){
-                        $constraint->aspectRatio();
-                    });
-                    $thumbnailName = "thumbnail-" . $imageName;
-
-                    $image->move(public_path($imageUrl), $imageName);
-                    $thumbnail->save(public_path($imageUrl. "/$thumbnailName"));
-
-                    $imageObject->image_url = $imageUrl . "/$imageName";
-                    $imageObject->image_thumbnail_url = $imageUrl . "/$thumbnailName";
-
-                    $imageObject->imageable()->associate($job);
-                    $imageObject->save();
+                    ImageUtil::saveImage($image, $imageUrl, $job);
                 }
             }
 
@@ -145,8 +143,22 @@ class JobController extends Controller
 
     public function singleJob(Job $job)
     {
+        $job = $job->load(['postedBy.profileImage', 'categories', 'images']);
+        $job->no_of_bids = $job->bids()->count();
+        $job->buyer_profile = BuyerProfile::getBuyerProfile($job->postedBy->id);
         $response = [
-          'job' => $job->load(['postedBy', 'categories', 'bids.offeredBy', 'orders', 'images']),
+          'job' => $job,
+        ];
+
+        return response($response, 200);
+    }
+
+    public function singleJobPosted(Job $job)
+    {
+        $job = $job->load(['categories', 'bids.offeredBy', 'orders', 'images']);
+        $job->no_of_bids = $job->bids()->count();
+        $response = [
+          'job' => $job,
         ];
 
         return response($response, 200);
