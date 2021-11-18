@@ -14,7 +14,7 @@ class AddNewColumnsInMessagesTable extends Migration
     public function up()
     {
         Schema::table('messages', function (Blueprint $table) {
-            $table->boolean('is_read');
+            $table->boolean('is_read')->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class AddNewColumnsInMessagesTable extends Migration
     public function down()
     {
         Schema::table('messages', function (Blueprint $table) {
-            //
+            $table->removeColumn('is_read');
         });
     }
 }
