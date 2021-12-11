@@ -94,4 +94,13 @@ class ChatController extends Controller
 
         return response(['status' => 'User was already added'], 200);
     }
+
+    public function recentChat()
+    {
+        $recentChat = Message::getRecentChat();
+        $response = [
+            'chat' => $recentChat,
+        ];
+        return response($response, 200);
+    }
 }

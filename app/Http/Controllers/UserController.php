@@ -26,7 +26,7 @@ class UserController extends Controller
     public function userBids()
     {
         $user = auth()->user();
-        $bids = $user->bids()->with('job')->get();
+        $bids = $user->bids()->with(['job', 'order'])->get();
         $response = [
             'bids' => $bids
         ];
@@ -47,7 +47,7 @@ class UserController extends Controller
     public function postedJobs()
     {
         $user = auth()->user();
-        $postedJobs = $user->jobs;
+        $postedJobs = $user->jobs()->with(['categories'])->latest()->get();
         $response = [
             'posted_jobs' => $postedJobs
         ];
@@ -60,10 +60,12 @@ class UserController extends Controller
             'phone_number' => '',
             'location' => '',
             'profile_picture' => '',
+            'name' => ''
         ]);
 
         $phoneNumber = $request->phone_number;
         $location = $request->location;
+        $name = $request->name;
 
         $user = auth()->user();
 
@@ -78,6 +80,7 @@ class UserController extends Controller
 
         $user->phone_number = $phoneNumber;
         $user->location = $location;
+        $user->name = $name;
 
         if($user->save()){
             return response(['status' => 'Profile saved successfully!'], 200);

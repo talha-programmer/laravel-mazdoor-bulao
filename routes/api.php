@@ -36,6 +36,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/user/posted_jobs/{job}', [JobController::class, 'singleJobPosted']);
 
+    //Route::post('/jobs/mark_as_completed/{job}', [JobController::class, 'markAsCompleted']);
+    Route::post('/jobs/update_job_status', [JobController::class, 'updateJobStatus']);
 
     Route::post('/user/bids', [UserController::class, 'userBids']);
 
@@ -49,6 +51,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/chat_users', [UserController::class, 'chatUsers']);
 
     Route::post('/chat/add_in_chat', [ChatController::class, 'addInChat']);
+    Route::post('/chat/recent_chat', [ChatController::class, 'recentChat']);
     Route::post('/chat/chat_with/{user:id}', [ChatController::class, 'chatWithUser']);
 
     Route::post('/chat/send_message', [ChatController::class, 'sendMessage']);
@@ -89,6 +92,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/jobs', [JobController::class, 'index']);
 
 Route::post('/jobs/{job}', [JobController::class, 'singleJob']);
+Route::post('/jobs/cities', [JobController::class, 'getCities']);
 
 Route::post('/job_categories', [JobCategoryController::class, 'index']);
 

@@ -27,6 +27,6 @@ class JobBid extends Model
 
     public function order()
     {
-        return $this->hasOne(Order::class, 'bid_id');
+        return $this->hasOne(Order::class, 'job_bid_id');
     }
 }

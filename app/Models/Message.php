@@ -49,5 +49,21 @@ class Message extends Model
             ->toArray();
     }
 
+    /**
+     * Get recent chat of the currently logged in user
+    */
+    public static function getRecentChat()
+    {
+        $userId = auth()->id();
+
+        return Message::query()
+            ->where('to', '=', $userId)
+            ->with(['from.profileImage'])
+            ->latest()
+            ->limit(20)
+            ->get()
+            ->toArray();
+    }
+
 
 }

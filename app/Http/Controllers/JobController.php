@@ -8,6 +8,7 @@ use App\Models\Job;
 
 use App\Models\WorkerProfile;
 use App\Util\ImageUtil;
+use BenSampo\Enum\Rules\EnumValue;
 use Illuminate\Http\Request;
 
 
@@ -26,18 +27,27 @@ class JobController extends Controller
     {
         $jobs = null;
         $user = $request->user('sanctum');
-        if($user){
-            $skillIds = WorkerProfile::getWorkerSkillIds($user->id);
-            if($skillIds && sizeof($skillIds) > 0){
-                $jobs = Job::jobWithCategoryIds($skillIds);
-
-            } else{
-                $jobs = Job::where('posted_by', '!=', $user->id)->with(['postedBy:id,name', 'categories'])->latest()->get();
-            }
+        $categories = $request->categories;
+        $city = $request->city;
+        if($categories){
+            $categories = explode(',', $categories);
         }
-        else{
-            $jobs = Job::with(['postedBy:id,name', 'categories'])->latest()->get();
-        }
+        $jobs = Job::filterJobs($categories, $user, $city);
+//        if($user){
+//            $skillIds = WorkerProfile::getWorkerSkillIds($user->id);
+//            if($skillIds && sizeof($skillIds) > 0){
+//                $jobs = Job::filterJobs($skillIds, $user);
+//
+//            } else{
+//                $jobs = Job::where(
+//                    [['posted_by', '!=', $user->id],
+//                        ['status', '=', JobStatus::Hiring]
+//                    ])->with(['postedBy:id,name', 'categories'])->latest()->get();
+//            }
+//        }
+//        else{
+//            $jobs = Job::where('status', '=', JobStatus::Hiring)->with(['postedBy:id,name', 'categories'])->latest()->get();
+//        }
         $response = ['jobs' => $jobs->toArray()];
         return response($response, 200);
     }
@@ -49,7 +59,8 @@ class JobController extends Controller
             'details' => 'required',
             'budget' => 'required|numeric',
             'deadline' => 'required|numeric',
-            'location' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'area' => 'string|max:255',
             'categories' => 'required|string',
             'job_id' => 'numeric|min:1',         // in case of edit
             'no_of_images' => 'numeric|min:0'
@@ -66,8 +77,8 @@ class JobController extends Controller
         $details = $request->details;
         $budget = $request->budget;
         $deadline = $request->deadline;
-        $location = $request->location;
-
+        $city = $request->city;
+        $area = $request->area;
         $categories = explode(',' , $request->categories);
         $jobId = $request->job_id;
 
@@ -98,7 +109,8 @@ class JobController extends Controller
         $job->fill([
             'title' => $title,
             'details' => $details,
-            'location' => $location,
+            'city' => $city,
+            'area' => $area,
             'deadline' => $deadline,
             'budget' => $budget,
             'status' => JobStatus::Hiring
@@ -155,7 +167,7 @@ class JobController extends Controller
 
     public function singleJobPosted(Job $job)
     {
-        $job = $job->load(['categories', 'bids.offeredBy', 'orders', 'images']);
+        $job = $job->load(['categories', 'bids.offeredBy', 'bids.order', 'orders', 'images']);
         $job->no_of_bids = $job->bids()->count();
         $response = [
           'job' => $job,
@@ -164,6 +176,40 @@ class JobController extends Controller
         return response($response, 200);
     }
 
+    /*public function markAsCompleted(Job $job)
+    {
+        $job->status = JobStatus::JobCompleted;
+        $job->save();
+        $response = [
+          'status' => 'Marked as completed successfully',
+        ];
+
+        return response($response, 200);
+    }*/
+
+    public function updateJobStatus(Request $request)
+    {
+        $request->validate([
+            'job_status' => ['required', new EnumValue(JobStatus::class)],
+            'job_id' =>  'required'
+        ]);
+
+        $job = Job::findOrFail($request->job_id);
+        $job->status = $request->job_status;
+
+        if($job->save()){
+            return response(['status' => 'Job status updated', 200]);
+        }else{
+            return response(['status' => 'Error occurred!'], 200);
+        }
+    }
+
+    public function getCities()
+    {
+        $cities = Job::getCities();
+
+        return response(['cities' => $cities], 200);
+    }
 
 
 }

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ReviewType;
+use App\Models\BuyerProfile;
 use App\Models\Order;
 use App\Models\Review;
 use App\Models\User;
+use App\Models\WorkerProfile;
 use BenSampo\Enum\Rules\EnumValue;
 use Illuminate\Http\Request;
 
@@ -24,7 +26,7 @@ class ReviewController extends Controller
     {
         $request->validate([
             'order_id' => 'required|numeric|min:1',
-            'review_type' => [new EnumValue(ReviewType::class)],      // TODO this is showing error in postman
+            'review_type' => [new EnumValue(ReviewType::class)],      // TODO this is not tested yet in api, showing error in postman
         ]);
 
         $reviewType = $request->review_type;
@@ -63,10 +65,13 @@ class ReviewController extends Controller
             $profile = null;
             if($review->review_type === ReviewType::FromWorkerToBuyer){
                 $profile = BuyerProfile::getBuyerProfile($review->given_to);
+                $order->worker_reviewed = true;
 
             }else if($review->review_type == ReviewType::FromBuyerToWorker){
                 $profile = WorkerProfile::getWorkerProfile($review->given_to);
+                $order->buyer_reviewed = true;
             }
+            $order->save();
 
             if($profile){
                 $profileRating = $profile->rating;

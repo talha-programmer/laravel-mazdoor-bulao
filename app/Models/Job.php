@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\JobStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -17,16 +18,28 @@ class Job extends Model
         'details',
         'budget',
         'deadline',
-        'location',
+        'city',
+        'area',
         'has_allotted',
-        'status'
+        'status',
+        'city',
+        'area'
     ];
 
-    protected $appends = ['url'];
+    protected $appends = ['url', 'location'];
 
     public function getUrlAttribute()
     {
         return Str::kebab($this->title .' ' . $this->id);
+    }
+
+    public function getLocationAttribute()
+    {
+        $location = $this->city;
+        if($this->area){
+            $location = "{$this->area}, {$location}";
+        }
+        return $location;
     }
 
     public function bids()
@@ -57,18 +70,32 @@ class Job extends Model
     /**
      * Fetch jobs filtered by the category Ids provided.
      */
-    public static function jobWithCategoryIds(array $categoryIds)
+    public static function filterJobs(array $categoryIds = null, User $user = null, string $city = null)
     {
         $loggedInUserId = -1;
-        if(Auth::check()){
-            $loggedInUserId = Auth::id();
+        if($user){
+            $loggedInUserId = $user->id;
         }
         return Job::query()
-            ->where('posted_by', '!=' , $loggedInUserId)
+            ->where([
+                ['posted_by', '!=' , $loggedInUserId],
+                ['status', '=', JobStatus::Hiring]
+                ])
+            ->when($city, function ($query, $city){
+                return $query->where('city', $city);
+            })
             ->join('jobs_with_categories', 'work_jobs.id', '=', 'jobs_with_categories.job_id')
-            ->whereIn('jobs_with_categories.job_category_id', $categoryIds)
+            ->when($categoryIds, function ($query, $categoryIds){
+                return $query->whereIn('jobs_with_categories.job_category_id', $categoryIds);
+            })
             ->latest()->with(['categories', 'postedBy:id,name'])
             ->get()->unique();
+    }
+
+    public static function getCities()
+    {
+        return Job::query()
+            ->select('city')->get()->unique();
     }
 
 

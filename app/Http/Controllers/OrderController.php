@@ -74,7 +74,7 @@ class OrderController extends Controller
     public function buyingOrders()
     {
         $user = auth()->user();
-        $buyingOrders = $user->buyingOrders()->with(['job' , 'worker', 'bid'])->get();
+        $buyingOrders = $user->buyingOrders()->with(['job' , 'worker', 'bid'])->latest()->get();
         $response = [
             'buying_orders' => $buyingOrders,
         ];

@@ -9,12 +9,11 @@ class Skill extends Model
 {
     protected $fillable = [
       'name',
-      'category'
     ];
     use HasFactory;
 
-    public function workers()
-    {
-        return $this->belongsToMany(User::class, 'worker_skills');
-    }
+//    public function workers()
+//    {
+//        return $this->belongsToMany(WorkerProfile::class, 'workers_with_skills', 'skill_id');
+//    }
 }
