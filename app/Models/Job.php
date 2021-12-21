@@ -22,8 +22,6 @@ class Job extends Model
         'area',
         'has_allotted',
         'status',
-        'city',
-        'area'
     ];
 
     protected $appends = ['url', 'location'];
@@ -94,8 +92,8 @@ class Job extends Model
 
     public static function getCities()
     {
-        return Job::query()
-            ->select('city')->get()->unique();
+        return Job::query()->distinct()->select(['city'])->get()->pluck('city');
+
     }
 
 

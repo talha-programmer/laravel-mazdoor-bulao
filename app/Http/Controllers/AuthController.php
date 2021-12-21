@@ -31,6 +31,9 @@ class AuthController extends Controller
             'password' => bcrypt($fields['password']),
         ]);
 
+        $user->workerProfile()->create();
+        $user->buyerProfile()->create();
+
         // This token will be used for authorization afterwards
         $token = $user->createToken('apptoken')->plainTextToken;
         $response = [

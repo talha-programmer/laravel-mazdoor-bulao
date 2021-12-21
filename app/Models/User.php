@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\JobStatus;
+use App\Enums\OrderStatus;
 use http\Env\Request;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -92,7 +94,6 @@ class User extends Authenticatable
 //        return $this->bids()->with('job')->get()->where('job.status' ,'=', 0);
 //    }
 
-
     public function buyingOrders()
     {
         return $this->hasMany(Order::class, 'buyer_id');
@@ -174,6 +175,7 @@ class User extends Authenticatable
     {
         return $this->morphOne(Image::class, 'imageable', 'imageable_type', 'imageable_id');
     }
+
 
 
 

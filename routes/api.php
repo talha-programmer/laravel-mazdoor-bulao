@@ -30,6 +30,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::post('/user', [UserController::class, 'user']);
+    Route::post('/user/save', [UserController::class, 'store']);
+    Route::post('/user/delete', [UserController::class, 'delete']);
+    Route::post('/user/user_profile', [UserController::class, 'userProfile']);
 
     Route::post('/user/applied_jobs', [UserController::class, 'appliedJobs']);
     Route::post('/user/posted_jobs', [UserController::class, 'postedJobs']);
@@ -83,6 +86,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/order/{order}', [OrderController::class, 'singleOrder']);
 
+    Route::prefix('/admin')->group(function (){
+        Route::post('/users', [UserController::class, 'index']);
+        Route::post('/jobs/categories', [JobCategoryController::class, 'index']);
+        Route::post('/jobs/categories/add', [JobCategoryController::class, 'store']);
+        Route::post('/jobs/categories/delete', [JobCategoryController::class, 'destroy']);
+    });
 
 });
 
@@ -92,7 +101,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/jobs', [JobController::class, 'index']);
 
 Route::post('/jobs/{job}', [JobController::class, 'singleJob']);
-Route::post('/jobs/cities', [JobController::class, 'getCities']);
+Route::post('/cities', [JobController::class, 'getCities']);
 
 Route::post('/job_categories', [JobCategoryController::class, 'index']);
 

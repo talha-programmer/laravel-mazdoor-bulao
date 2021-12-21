@@ -119,6 +119,6 @@ class OrderController extends Controller
         $order->ending_time = Carbon::now()->format('Y-m-d H:i:s');
         $order->save();
 
-        return response(['status' => 'Order marked as completed from seller!'], 200);
+        return response(['status' => 'Order marked as completed from worker!'], 200);
     }
 }

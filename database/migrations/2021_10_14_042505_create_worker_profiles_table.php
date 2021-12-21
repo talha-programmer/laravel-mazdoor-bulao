@@ -18,7 +18,7 @@ class CreateWorkerProfilesTable extends Migration
             $table->timestamps();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->float('rating')->nullable();
-            $table->text('description');
+            $table->text('description')->nullable();
 
         });
     }
