@@ -40,8 +40,12 @@ class JobCategoryController extends Controller
         return $category;
     }
 
-    public function destroy(JobCategory $category)
+    public function destroy(Request $request)
     {
+        $request->validate([
+            'category_id' => 'required'
+        ]);
+        $category = JobCategory::find($request->category_id);
        return $category->delete();
     }
 }

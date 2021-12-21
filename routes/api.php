@@ -63,6 +63,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/destroy_job', [JobController::class, 'destroy'])->name('job.destroy');
 
     Route::post('/store_job_category', [JobCategoryController::class, 'store']);
+    Route::post('/delete_job_category', [JobCategoryController::class, 'destroy']);
     Route::post('/store_job_bid', [JobBidController::class, 'store']);
     Route::delete('/destroy_job_bid', [JobBidController::class, 'destroy']);
 
