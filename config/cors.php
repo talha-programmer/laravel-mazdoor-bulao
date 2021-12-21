@@ -19,7 +19,8 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    //'allowed_origins' => ['*'],
+    'allowed_origins' => ['*', 'http://mazdoorbulao.ml'],
 
     'allowed_origins_patterns' => ['*'],
 
