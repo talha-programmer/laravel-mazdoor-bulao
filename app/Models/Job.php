@@ -6,6 +6,7 @@ use App\Enums\JobStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 
 class Job extends Model
@@ -74,10 +75,12 @@ class Job extends Model
         if($user){
             $loggedInUserId = $user->id;
         }
+
         return Job::query()
             ->where([
                 ['posted_by', '!=' , $loggedInUserId],
-                ['status', '=', JobStatus::Hiring]
+                ['status', '=', JobStatus::Hiring],
+                ['created_at', '>',  now()->subDays(5)->endOfDay()]
                 ])
             ->when($city, function ($query, $city){
                 return $query->where('city', $city);
@@ -87,6 +90,7 @@ class Job extends Model
                 return $query->whereIn('jobs_with_categories.job_category_id', $categoryIds);
             })
             ->latest()->with(['categories', 'postedBy:id,name'])
+
             ->get()->unique();
     }
 
